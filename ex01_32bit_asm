@@ -1,13 +1,17 @@
-;
-; to compile and run use following commands
-; this was completed in ubuntu  
-; nasm -f elf32 ex01_asm -o ex01_asm.o
+; Assembly program to print "Hello, World!" and perform addition and subtraction
+; To compile and run, use the following commands:
+; nasm -f elf32 ex01_asm.asm -o ex01_asm.o
 ; ld -m elf_i386 ex01_asm.o -o ex01_asm
-; following can be used to review and debug the file
+; To review and debug the file, you can use:
 ; readelf -a ex01_asm
-; sudo apt-get install edb-debugger // if you do not have
+; sudo apt-get install edb-debugger  ; if you do not have EDB installed
 ; edb --run ex01_asm
-; use objdump -d ./ex01_asm
+; for gdb use following
+; gdb ./ex01_asm
+; break _start
+; disassemble _start
+; To disassemble the file, use:
+; objdump -d ./ex01_asm
 
 section .data
     hello db 'Hello, World!', 0xA  ; Null-terminated string with newline
