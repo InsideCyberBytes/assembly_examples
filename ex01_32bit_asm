@@ -1,0 +1,77 @@
+;
+; to compile and run use following commands
+; this was completed in ubuntu  
+; nasm -f elf32 ex01_asm -o ex01_asm.o
+; ld -m elf_i386 ex01_asm.o -o ex01_asm
+; following can be used to review and debug the file
+; readelf -a ex01_asm
+; sudo apt-get install edb-debugger // if you do not have
+; edb --run ex01_asm
+; use objdump -d ./ex01_asm
+
+section .data
+    hello db 'Hello, World!', 0xA  ; Null-terminated string with newline
+    hello_len equ $ - hello         ; Length of the hello string
+
+    add_msg db 'Addition: ', 0      ; Message for addition
+    add_result db '0', 0xA          ; Placeholder for addition result, with newline
+
+    sub_msg db 'Subtraction: ', 0   ; Message for subtraction
+    sub_result db '0', 0xA          ; Placeholder for subtraction result, with newline
+
+section .bss
+    ; No uninitialized data
+
+section .text
+    global _start                ; Entry point for the linker
+
+_start:
+    ; Write "Hello, World!" to stdout
+    mov eax, 4                   ; sys_write system call number
+    mov ebx, 1                   ; File descriptor (stdout)
+    mov ecx, hello               ; Pointer to the string
+    mov edx, hello_len           ; Number of bytes to write
+    int 0x80                     ; Call the kernel
+
+    ; Perform addition
+    mov eax, 5                   ; First number
+    add eax, 3                   ; Add second number (5 + 3 = 8)
+    add eax, '0'                 ; Convert result to ASCII
+    mov [add_result], al         ; Store result in add_result
+
+    ; Write addition result to stdout
+    mov eax, 4                   ; sys_write system call number
+    mov ebx, 1                   ; File descriptor (stdout)
+    mov ecx, add_msg             ; Pointer to the addition message
+    mov edx, 10                  ; Number of bytes to write (length of "Addition: ")
+    int 0x80                     ; Call the kernel
+
+    mov eax, 4                   ; sys_write system call number
+    mov ebx, 1                   ; File descriptor (stdout)
+    mov ecx, add_result          ; Pointer to the addition result
+    mov edx, 2                   ; Number of bytes to write (length of "8\n")
+    int 0x80                     ; Call the kernel
+
+    ; Perform subtraction
+    mov eax, 5                   ; First number
+    sub eax, 3                   ; Subtract second number (5 - 3 = 2)
+    add eax, '0'                 ; Convert result to ASCII
+    mov [sub_result], al         ; Store result in sub_result
+
+    ; Write subtraction result to stdout
+    mov eax, 4                   ; sys_write system call number
+    mov ebx, 1                   ; File descriptor (stdout)
+    mov ecx, sub_msg             ; Pointer to the subtraction message
+    mov edx, 13                  ; Number of bytes to write (length of "Subtraction: ")
+    int 0x80                     ; Call the kernel
+
+    mov eax, 4                   ; sys_write system call number
+    mov ebx, 1                   ; File descriptor (stdout)
+    mov ecx, sub_result          ; Pointer to the subtraction result
+    mov edx, 2                   ; Number of bytes to write (length of "2\n")
+    int 0x80                     ; Call the kernel
+
+    ; Exit the program
+    mov eax, 1                   ; sys_exit system call number
+    xor ebx, ebx                 ; Exit status 0
+    int 0x80                     ; Call the kernel
